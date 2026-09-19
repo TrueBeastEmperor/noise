@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoNoise — Metronome, Clocks, Nature & Keyboards</title>
+    <style>
+        :root {
+            --bg-dark: #0F172A;
+            --card-dark: #1E293B;
+            --card-stroke: #334155;
+            --accent-primary: #00E5FF;
+            --accent-secondary: #A855F7;
+            --accent-pink: #EC4899;
+            --accent-emerald: #10B981;
+            --accent-amber: #F59E0B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 16px 12px 110px;
+            transition: background-color 0.25s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 2px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-primary);
+            transition: color 0.25s ease;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .randomize-btn {
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 18px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+            transition: transform 0.1s, opacity 0.15s;
+        }
+
+        .randomize-btn:active {
+            transform: scale(0.95);
+        }
+
+        .badge {
+            background: var(--card-stroke);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .badge.active {
+            color: var(--accent-emerald);
+            border-color: var(--accent-emerald);
+        }
+
+        /* Navigation Tabs */
+        .tab-bar {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 4px 0;
+            border-bottom: 2px solid var(--card-stroke);
+        }
+        .tab-bar::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            background: var(--card-dark);
+            border: 1px solid var(--card-stroke);
+            border-radius: 10px 10px 0 0;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-primary);
+            border-bottom: 3px solid var(--accent-primary);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .tab-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--card-dark);
+            border: 1px solid var(--card-stroke);
+            border-radius: 16px;
+            padding: 16px;
+            transition: background 0.25s, border-color 0.25s;
+        }
+
+        .switch-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 26px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-switch {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--card-stroke);
+            transition: .3s;
+            border-radius: 26px;
+        }
+        .slider-switch:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider-switch {
+            background-color: var(--accent-primary);
+        }
+        input:checked + .slider-switch:before {
+            transform: translateX(20px);
+            background-color: var(--bg-dark);
+        }
+
+        .visualizer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .beat-orb {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-primary) 0%, rgba(0, 229, 255, 0) 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 900;
+            color: #FFF;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+        }
+
+        .tempo-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .tempo-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            border: 1px solid var(--card-stroke);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .bpm-display {
+            text-align: center;
+        }
+
+        .bpm-val {
+            font-size: 32px;
+            font-weight: 900;
+        }
+
+        .bpm-lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .chip-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .chip {
+            background: var(--card-dark);
+            border: 1px solid var(--card-stroke);
+            border-radius: 18px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .chip.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: var(--bg-dark);
+            font-weight: 800;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+            height: 6px;
+            background: var(--card-stroke);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        /* Bottom Floating Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--card-stroke);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .play-btn {
+            width: 100%;
+            max-width: 500px;
+            height: 52px;
+            border-radius: 26px;
+            border: none;
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s, color 0.2s;
+        }
+
+        .play-btn.playing {
+            background: #EF4444;
+            color: #FFF;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 id="appTitle">⚡ ChronoNoise</h1>
+        <div class="header-actions">
+            <button id="btnRandomize" class="randomize-btn">🎲 RANDOMIZE</button>
+            <div id="statusBadge" class="badge">STANDBY</div>
+        </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="beat">⏰ Beat &amp; Clock</button>
+        <button class="tab-btn" data-tab="nature">🌿 Nature</button>
+        <button class="tab-btn" data-tab="keyboards">⌨️ Keyboards</button>
+        <button class="tab-btn" data-tab="colors">🌈 Colors</button>
+        <button class="tab-btn" data-tab="biome">🌀 Living Biome</button>
+        <button class="tab-btn" data-tab="synth">🎛️ Synth &amp; Themes</button>
+    </div>
+
+    <!-- TAB: BEAT & METRONOME -->
+    <div id="tabPaneBeat" class="tab-pane">
+        <div class="card">
+            <div class="switch-row">
+                <div>
+                    <div style="font-weight: 800; font-size: 14px;">Metronome / Beat Active</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Switch off to listen to nature or keyboards only</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="switchBeat" checked>
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="card visualizer-container">
+            <div id="beatOrb" class="beat-orb">1</div>
+            <div class="tempo-row">
+                <button id="btnMinus" class="tempo-btn">−</button>
+                <div class="bpm-display">
+                    <div id="bpmVal" class="bpm-val">60</div>
+                    <div class="bpm-lbl">BPM (Pace)</div>
+                </div>
+                <button id="btnPlus" class="tempo-btn">+</button>
+            </div>
+            <input type="range" id="bpmSlider" min="30" max="300" value="60">
+
+            <div style="display: flex; gap: 8px; width: 100%; justify-content: center; margin-top: 6px;">
+                <button id="tapTempoBtn" class="chip" style="border-color: var(--card-stroke);">👆 TAP TEMPO</button>
+                <div style="display: flex; gap: 4px;" id="sigChips">
+                    <div class="chip" data-sig="2">2/4</div>
+                    <div class="chip" data-sig="3">3/4</div>
+                    <div class="chip active" data-sig="4">4/4</div>
+                    <div class="chip" data-sig="6">6/8</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-weight: 800; font-size: 13px; color: var(--accent-primary);">CLOCK &amp; METRONOME SOUNDS</div>
+            <div id="clockDesc" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Original 1050Hz / 750Hz dual-frequency decayed sine wave</div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Beat Volume</span>
+                    <span id="lblClockVol">75%</span>
+                </div>
+                <input type="range" id="sliderClockVol" min="0" max="1" step="0.01" value="0.75">
+            </div>
+
+            <div class="chip-grid" id="clockChips">
+                <div class="chip" data-clock="off">🔇 Mute / Off</div>
+                <div class="chip active" data-clock="etera">⚡ Etera Synthesized</div>
+                <div class="chip" data-clock="grandfather">🕰️ Grandfather Clock</div>
+                <div class="chip" data-clock="watch">⏱️ Watch Escapement</div>
+                <div class="chip" data-clock="woodblock">🪵 Woodblock</div>
+                <div class="chip" data-clock="cowbell">🔔 Cowbell</div>
+                <div class="chip" data-clock="waterdrop">💧 Water Droplet</div>
+                <div class="chip" data-clock="heartbeat">💓 Heartbeat</div>
+                <div class="chip" data-clock="vintage">⏰ Vintage Alarm</div>
+                <div class="chip" data-clock="clepsydra">🏺 Ancient Clepsydra</div>
+                <div class="chip" data-clock="fingersnap">🫰 Finger Snap</div>
+                <div class="chip" data-clock="sonar">📡 Sonar Ping</div>
+                <div class="chip" data-clock="singingBowl">🥣 Singing Bowl</div>
+                <div class="chip" data-clock="digital">📟 Digital Beep</div>
+                <div class="chip" data-clock="organicTypewriter">⌨️ Typewriter Metronome</div>
+                <div class="chip" data-clock="bookPage">📖 Book Page Metronome</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: NATURE -->
+    <div id="tabPaneNature" class="tab-pane" style="display: none;">
+        <div class="card">
+            <div class="switch-row">
+                <div>
+                    <div style="font-weight: 800; font-size: 14px; color: var(--accent-emerald);">🌿 Nature Soundscapes</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Acoustic outdoor biomes</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="switchNature">
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Nature Volume</span>
+                    <span id="lblNatureVol">30%</span>
+                </div>
+                <input type="range" id="sliderNatureVol" min="0" max="1" step="0.01" value="0.30">
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-weight: 800; font-size: 12px; color: var(--accent-emerald);">OUTDOOR BIOMES</div>
+            <div id="natureDesc" style="font-size: 11px; color: var(--text-muted); margin: 4px 0 8px;">Multi-harmonic 4.2-4.8 kHz nocturnal meadow chirps with warm natural cadence</div>
+            <div class="chip-grid" id="natureChips">
+                <div class="chip active" data-noise="crickets">🦗 Summer Night Crickets</div>
+                <div class="chip" data-noise="meadow">🌾 Nocturnal Meadow (Trail-Sense)</div>
+                <div class="chip" data-noise="rain">🌧️ Gentle Rain</div>
+                <div class="chip" data-noise="thunder">⛈️ Distant Thunder</div>
+                <div class="chip" data-noise="brook">🏞️ Mountain Brook</div>
+                <div class="chip" data-noise="campfire">🔥 Campfire Crackle</div>
+                <div class="chip" data-noise="ocean">🌊 Ocean Waves (Trail-Sense)</div>
+                <div class="chip" data-noise="wind">🍃 Forest Wind</div>
+                <div class="chip" data-noise="cicadas">🪲 Summer Cicadas</div>
+                <div class="chip" data-noise="cave">🕳️ Deep Cave Echoes</div>
+                <div class="chip" data-noise="frogs">🐸 Night Frogs</div>
+                <div class="chip" data-noise="blizzard">❄️ Blizzard Howl</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: KEYBOARDS & INDOOR -->
+    <div id="tabPaneKeyboards" class="tab-pane" style="display: none;">
+        <div class="card">
+            <div class="switch-row">
+                <div>
+                    <div style="font-weight: 800; font-size: 14px; color: var(--accent-amber);">⌨️ Keyboards &amp; Study</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Mechanical switches &amp; indoor room tones</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="switchIndoor">
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Typing &amp; Room Volume</span>
+                    <span id="lblIndoorVol">30%</span>
+                </div>
+                <input type="range" id="sliderIndoorVol" min="0" max="1" step="0.01" value="0.30">
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-weight: 800; font-size: 12px; color: var(--accent-amber);">MECHANICAL &amp; SILENT KEYBOARDS</div>
+            <div id="keyboardDesc" style="font-size: 11px; color: var(--text-muted); margin: 4px 0 8px;">Ultra-smooth factory-lubed POM linear switches with rounded creamy pop</div>
+            <div class="chip-grid" id="keyboardChips">
+                <div class="chip active" data-noise="keyCreamy">🍦 Creamy Lubed (Buttery Smooth)</div>
+                <div class="chip" data-noise="keyMarbly">🪨 Marbly Jelly (Poppy Foam)</div>
+                <div class="chip" data-noise="keyTopre">☁️ Muted Topre (Capacitive)</div>
+                <div class="chip" data-noise="keyRed">⌨️ Red Switch (Linear Thock)</div>
+                <div class="chip" data-noise="keyBrown">⌨️ Brown Switch (Tactile)</div>
+                <div class="chip" data-noise="keyBlue">⌨️ Blue Switch (Clicky)</div>
+                <div class="chip" data-noise="keyChiclet">💻 Laptop / Chiclet (Silent)</div>
+                <div class="chip" data-noise="keyBuckling">📟 IBM Model M (Buckling Spring)</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-weight: 800; font-size: 12px; color: var(--accent-amber);">INDOOR &amp; FOCUS AMBIANCE</div>
+            <div id="indoorDesc" style="font-size: 11px; color: var(--text-muted); margin: 4px 0 8px;">Books, cafes, vinyl records &amp; calm rooms</div>
+            <div class="chip-grid" id="indoorChips">
+                <div class="chip" data-noise="book">📖 Book Page Flipping</div>
+                <div class="chip" data-noise="coffee">☕ Coffee Shop Ambience</div>
+                <div class="chip" data-noise="vinyl">📻 Vintage Vinyl Record</div>
+                <div class="chip" data-noise="clockRoom">🕰️ Antique Clock Room</div>
+                <div class="chip" data-noise="fan">💨 Ceiling Fan &amp; Drone</div>
+                <div class="chip" data-noise="fireplace">🪵 Cozy Hearth Fireplace</div>
+                <div class="chip" data-noise="pencil">✏️ Pencil Sketching</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: COLOR NOISE -->
+    <div id="tabPaneColors" class="tab-pane" style="display: none;">
+        <div class="card">
+            <div class="switch-row">
+                <div>
+                    <div style="font-weight: 800; font-size: 14px; color: var(--accent-secondary);">🌈 Spectral Noise Colors</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Calibrated frequency density profiles</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="switchColors">
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Noise Volume</span>
+                    <span id="lblColorVol">25%</span>
+                </div>
+                <input type="range" id="sliderColorVol" min="0" max="1" step="0.01" value="0.25">
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-weight: 800; font-size: 12px; color: var(--accent-secondary);">SPECTRAL DENSITY CHOICES</div>
+            <div id="colorDesc" style="font-size: 11px; color: var(--text-muted); margin: 4px 0 8px;">1/f² power density, deep soothing low-frequency rumble</div>
+            <div class="chip-grid" id="colorChips">
+                <div class="chip active" data-noise="brown">🟤 Brown (Deep 1/f²)</div>
+                <div class="chip" data-noise="pink">🌸 Pink (Balanced 1/f)</div>
+                <div class="chip" data-noise="white">⚪ White (Equal Energy)</div>
+                <div class="chip" data-noise="grey">🔘 Grey (Equal Loudness)</div>
+                <div class="chip" data-noise="green">🟢 Green (Forest Mid-Hum)</div>
+                <div class="chip" data-noise="blue">🔵 Blue (Crisp +3dB)</div>
+                <div class="chip" data-noise="violet">🟣 Violet (High Hiss +6dB)</div>
+                <div class="chip" data-noise="black">⚫ Black (Sub-Bass &lt;90Hz)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: LIVING BIOME -->
+    <div id="tabPaneBiome" class="tab-pane" style="display: none;">
+        <div class="card">
+            <div class="switch-row">
+                <div>
+                    <div style="font-weight: 800; font-size: 14px; color: var(--accent-primary);">🌀 Living Biome (Morphing)</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Autonomous cross-fading soundscape</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="switchBiome">
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 10px 0;">Cross-fades continuously between rain, meadow crickets, mountain wind, hearth fire, and library book flips over your selected duration.</p>
+            <div style="font-size: 12px; font-weight: 700; color: var(--accent-primary); margin-bottom: 6px;">Morphing Speed: <span id="lblMorphSpeed">1 Minute</span></div>
+            <div class="chip-grid" id="morphChips">
+                <div class="chip" data-speed="15">15 Seconds</div>
+                <div class="chip active" data-speed="60">1 Minute</div>
+                <div class="chip" data-speed="300">5 Minutes</div>
+                <div class="chip" data-speed="900">15 Minutes</div>
+                <div class="chip" data-speed="3600">1 Hour</div>
+                <div class="chip" data-speed="14400">4 Hours</div>
+                <div class="chip" data-speed="86400">24 Hours (Day Cycle)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: SYNTH & THEMES -->
+    <div id="tabPaneSynth" class="tab-pane" style="display: none;">
+        <div class="card">
+            <div style="font-weight: 800; font-size: 13px; color: var(--accent-primary); margin-bottom: 8px;">🎨 VISUAL PALETTES &amp; THEMES</div>
+            <div class="chip-grid" id="themeChips">
+                <div class="chip active" data-theme="cyber">⚡ Cyber Cyan</div>
+                <div class="chip" data-theme="oled">🌑 OLED Midnight</div>
+                <div class="chip" data-theme="forest">🌲 Forest Emerald</div>
+                <div class="chip" data-theme="sunset">🌅 Sunset Ember</div>
+                <div class="chip" data-theme="tokyo">🔮 Tokyo Neon</div>
+                <div class="chip" data-theme="nordic">❄️ Nordic Frost</div>
+                <div class="chip" data-theme="coffee">☕ Coffee &amp; Parchment</div>
+                <div class="chip" data-theme="solarized">☀️ Solarized Teal</div>
+                <div class="chip" data-theme="dracula">🧛 Dracula Neon</div>
+                <div class="chip" data-theme="abyssal">🌊 Abyssal Trench</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-weight: 800; font-size: 13px; color: var(--accent-pink); margin-bottom: 8px;">🎛️ ACOUSTIC SYNTHESIZER CONTROLS</div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Humanize / Timing Jitter</span>
+                    <span id="lblJitter">0% (Robotic)</span>
+                </div>
+                <input type="range" id="sliderJitter" min="0" max="1" step="0.05" value="0">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Pitch Scaling</span>
+                    <span id="lblPitch">1.00x</span>
+                </div>
+                <input type="range" id="sliderPitch" min="0.5" max="2.5" step="0.05" value="1.0">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Decay / Resonance Time</span>
+                    <span id="lblDecay">1.00x</span>
+                </div>
+                <input type="range" id="sliderDecay" min="0.2" max="3.0" step="0.05" value="1.0">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>Tone Filter (Cutoff Hz)</span>
+                    <span id="lblFilter">12000 Hz</span>
+                </div>
+                <input type="range" id="sliderFilter" min="200" max="20000" step="100" value="12000">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Floating Play / Stop Action Bar -->
+<div class="bottom-bar">
+    <button id="playBtn" class="play-btn">▶ START CHRONONOISE</button>
+</div>
+
+<script>
+    const themes = {
+        cyber: { bgDark: "#0F172A", cardDark: "#1E293B", cardStroke: "#334155", primary: "#00E5FF", secondary: "#A855F7" },
+        oled: { bgDark: "#000000", cardDark: "#111111", cardStroke: "#222222", primary: "#38BDF8", secondary: "#E2E8F0" },
+        forest: { bgDark: "#09140E", cardDark: "#132319", cardStroke: "#1E3827", primary: "#10B981", secondary: "#34D399" },
+        sunset: { bgDark: "#170B16", cardDark: "#291325", cardStroke: "#3F1F39", primary: "#F59E0B", secondary: "#EC4899" },
+        tokyo: { bgDark: "#0D061A", cardDark: "#1C0C38", cardStroke: "#2D1459", primary: "#D946EF", secondary: "#818CF8" },
+        nordic: { bgDark: "#0B132B", cardDark: "#1C2541", cardStroke: "#3A506B", primary: "#48CAE4", secondary: "#E0E1DD" },
+        coffee: { bgDark: "#1A120B", cardDark: "#2C1D11", cardStroke: "#3C2A21", primary: "#E5BA73", secondary: "#D5CEA3" },
+        solarized: { bgDark: "#002B36", cardDark: "#073642", cardStroke: "#1B4D58", primary: "#2AA198", secondary: "#B58900" },
+        dracula: { bgDark: "#191A21", cardDark: "#282A36", cardStroke: "#44475A", primary: "#50FA7B", secondary: "#FF79C6" },
+        abyssal: { bgDark: "#03071E", cardDark: "#0A1128", cardStroke: "#1C2A4A", primary: "#00F5D4", secondary: "#7B2CBF" }
+    };
+
+    function applyTheme(themeKey) {
+        const t = themes[themeKey] || themes.cyber;
+        document.documentElement.style.setProperty('--bg-dark', t.bgDark);
+        document.documentElement.style.setProperty('--card-dark', t.cardDark);
+        document.documentElement.style.setProperty('--card-stroke', t.cardStroke);
+        document.documentElement.style.setProperty('--accent-primary', t.primary);
+        document.documentElement.style.setProperty('--accent-secondary', t.secondary);
+        document.getElementById('btnRandomize').style.background = t.primary;
+        document.getElementById('btnRandomize').style.color = t.bgDark;
+        if (!isPlaying) {
+            playBtn.style.background = t.primary;
+            playBtn.style.color = t.bgDark;
+        }
+    }
+
+    // Tab switcher
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanes = {
+        beat: document.getElementById('tabPaneBeat'),
+        nature: document.getElementById('tabPaneNature'),
+        keyboards: document.getElementById('tabPaneKeyboards'),
+        colors: document.getElementById('tabPaneColors'),
+        biome: document.getElementById('tabPaneBiome'),
+        synth: document.getElementById('tabPaneSynth')
+    };
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const target = btn.dataset.tab;
+            Object.keys(tabPanes).forEach(k => {
+                tabPanes[k].style.display = (k === target) ? 'flex' : 'none';
+            });
+        });
+    });
+
+    // Audio Context & State
+    let audioCtx = null;
+    let isPlaying = false;
+    let bpm = 60;
+    let clockType = 'etera';
+    let noiseType = 'off';
+    let isBeatMuted = false;
+    let clockVol = 0.75;
+    let noiseVol = 0.30;
+    let pitchMult = 1.0;
+    let decayMult = 1.0;
+    let filterCutoff = 12000;
+    let humanJitter = 0.0;
+    let morphDurationSec = 60;
+    let beatsPerBar = 4;
+    let currentBeat = 0;
+
+    let masterFilter = null;
+    let clockGain = null;
+    let noiseGain = null;
+    let noiseNode = null;
+    let timerId = null;
+    let nextBeatTime = 0;
+
+    // Switch Handlers
+    const switchBeat = document.getElementById('switchBeat');
+    const switchNature = document.getElementById('switchNature');
+    const switchIndoor = document.getElementById('switchIndoor');
+    const switchColors = document.getElementById('switchColors');
+    const switchBiome = document.getElementById('switchBiome');
+
+    switchBeat.addEventListener('change', (e) => {
+        isBeatMuted = !e.target.checked;
+        if (clockGain && audioCtx) {
+            clockGain.gain.setValueAtTime(isBeatMuted || clockType === 'off' ? 0 : clockVol, audioCtx.currentTime);
+        }
+    });
+
+    function setAmbiance(type, activeSwitch) {
+        noiseType = type;
+        switchNature.checked = (activeSwitch === 'nature');
+        switchIndoor.checked = (activeSwitch === 'indoor');
+        switchColors.checked = (activeSwitch === 'colors');
+        switchBiome.checked = (activeSwitch === 'biome');
+        if (noiseGain && audioCtx) {
+            noiseGain.gain.setValueAtTime(type === 'off' ? 0 : noiseVol, audioCtx.currentTime);
+        }
+    }
+
+    switchNature.addEventListener('change', (e) => {
+        if (e.target.checked) setAmbiance('crickets', 'nature');
+        else setAmbiance('off', '');
+    });
+
+    switchIndoor.addEventListener('change', (e) => {
+        if (e.target.checked) setAmbiance('keyBlue', 'indoor');
+        else setAmbiance('off', '');
+    });
+
+    switchColors.addEventListener('change', (e) => {
+        if (e.target.checked) setAmbiance('brown', 'colors');
+        else setAmbiance('off', '');
+    });
+
+    switchBiome.addEventListener('change', (e) => {
+        if (e.target.checked) setAmbiance('biome', 'biome');
+        else setAmbiance('off', '');
+    });
+
+    // Tap tempo
+    let tapTimes = [];
+    document.getElementById('tapTempoBtn').addEventListener('click', () => {
+        const now = performance.now();
+        tapTimes.push(now);
+        if (tapTimes.length > 5) tapTimes.shift();
+        if (tapTimes.length >= 2) {
+            let total = 0;
+            for (let i = 1; i < tapTimes.length; i++) total += (tapTimes[i] - tapTimes[i-1]);
+            const avg = total / (tapTimes.length - 1);
+            if (avg > 200 && avg < 2000) {
+                bpm = Math.round(60000 / avg);
+                document.getElementById('bpmSlider').value = bpm;
+                document.getElementById('bpmVal').innerText = bpm;
+            }
+        }
+    });
+
+    // BPM Buttons
+    document.getElementById('btnMinus').addEventListener('click', () => {
+        bpm = Math.max(30, bpm - 1);
+        document.getElementById('bpmSlider').value = bpm;
+        document.getElementById('bpmVal').innerText = bpm;
+    });
+    document.getElementById('btnPlus').addEventListener('click', () => {
+        bpm = Math.min(300, bpm + 1);
+        document.getElementById('bpmSlider').value = bpm;
+        document.getElementById('bpmVal').innerText = bpm;
+    });
+    document.getElementById('bpmSlider').addEventListener('input', (e) => {
+        bpm = parseInt(e.target.value);
+        document.getElementById('bpmVal').innerText = bpm;
+    });
+
+    // Time signature
+    document.getElementById('sigChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip');
+        if (!chip) return;
+        document.querySelectorAll('#sigChips .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        beatsPerBar = parseInt(chip.dataset.sig);
+    });
+
+    // Sliders
+    document.getElementById('sliderClockVol').addEventListener('input', (e) => {
+        clockVol = parseFloat(e.target.value);
+        document.getElementById('lblClockVol').innerText = `${Math.round(clockVol * 100)}%`;
+        if (clockGain && audioCtx && !isBeatMuted && clockType !== 'off') {
+            clockGain.gain.setValueAtTime(clockVol, audioCtx.currentTime);
+        }
+    });
+
+    ['sliderNatureVol', 'sliderIndoorVol', 'sliderColorVol'].forEach(id => {
+        document.getElementById(id).addEventListener('input', (e) => {
+            noiseVol = parseFloat(e.target.value);
+            document.getElementById('lblNatureVol').innerText = `${Math.round(noiseVol * 100)}%`;
+            document.getElementById('lblIndoorVol').innerText = `${Math.round(noiseVol * 100)}%`;
+            document.getElementById('lblColorVol').innerText = `${Math.round(noiseVol * 100)}%`;
+            document.getElementById('sliderNatureVol').value = noiseVol;
+            document.getElementById('sliderIndoorVol').value = noiseVol;
+            document.getElementById('sliderColorVol').value = noiseVol;
+            if (noiseGain && audioCtx && noiseType !== 'off') {
+                noiseGain.gain.setValueAtTime(noiseVol, audioCtx.currentTime);
+            }
+        });
+    });
+
+    // Acoustic controls
+    document.getElementById('sliderJitter').addEventListener('input', (e) => {
+        humanJitter = parseFloat(e.target.value);
+        const pct = Math.round(humanJitter * 100);
+        document.getElementById('lblJitter').innerText = pct === 0 ? "0% (Robotic)" : `${pct}% Humanized`;
+    });
+    document.getElementById('sliderPitch').addEventListener('input', (e) => {
+        pitchMult = parseFloat(e.target.value);
+        document.getElementById('lblPitch').innerText = `${pitchMult.toFixed(2)}x`;
+    });
+    document.getElementById('sliderDecay').addEventListener('input', (e) => {
+        decayMult = parseFloat(e.target.value);
+        document.getElementById('lblDecay').innerText = `${decayMult.toFixed(2)}x`;
+    });
+    document.getElementById('sliderFilter').addEventListener('input', (e) => {
+        filterCutoff = parseFloat(e.target.value);
+        document.getElementById('lblFilter').innerText = `${Math.round(filterCutoff)} Hz`;
+        if (masterFilter && audioCtx) {
+            masterFilter.frequency.setValueAtTime(filterCutoff, audioCtx.currentTime);
+        }
+    });
+
+    // Preset Selection Listeners
+    function setupChipList(containerId, callback) {
+        document.getElementById(containerId).addEventListener('click', (e) => {
+            const chip = e.target.closest('.chip');
+            if (!chip) return;
+            document.querySelectorAll(`#${containerId} .chip`).forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            callback(chip);
+        });
+    }
+
+    setupChipList('clockChips', (chip) => {
+        clockType = chip.dataset.clock;
+        if (clockType === 'off') {
+            switchBeat.checked = false;
+            isBeatMuted = true;
+        } else {
+            switchBeat.checked = true;
+            isBeatMuted = false;
+        }
+    });
+
+    setupChipList('natureChips', (chip) => {
+        setAmbiance(chip.dataset.noise, 'nature');
+    });
+
+    setupChipList('keyboardChips', (chip) => {
+        setAmbiance(chip.dataset.noise, 'indoor');
+    });
+
+    setupChipList('indoorChips', (chip) => {
+        setAmbiance(chip.dataset.noise, 'indoor');
+    });
+
+    setupChipList('colorChips', (chip) => {
+        setAmbiance(chip.dataset.noise, 'colors');
+    });
+
+    setupChipList('morphChips', (chip) => {
+        morphDurationSec = parseInt(chip.dataset.speed);
+        document.getElementById('lblMorphSpeed').innerText = chip.innerText;
+        setAmbiance('biome', 'biome');
+    });
+
+    setupChipList('themeChips', (chip) => {
+        applyTheme(chip.dataset.theme);
+    });
+
+    // Randomize
+    document.getElementById('btnRandomize').addEventListener('click', () => {
+        const choices = [
+            { type: 'crickets', group: 'nature' },
+            { type: 'meadow', group: 'nature' },
+            { type: 'rain', group: 'nature' },
+            { type: 'thunder', group: 'nature' },
+            { type: 'brook', group: 'nature' },
+            { type: 'campfire', group: 'nature' },
+            { type: 'ocean', group: 'nature' },
+            { type: 'wind', group: 'nature' },
+            { type: 'keyCreamy', group: 'indoor' },
+            { type: 'keyMarbly', group: 'indoor' },
+            { type: 'keyTopre', group: 'indoor' },
+            { type: 'keyRed', group: 'indoor' },
+            { type: 'keyBrown', group: 'indoor' },
+            { type: 'keyBlue', group: 'indoor' },
+            { type: 'keyChiclet', group: 'indoor' },
+            { type: 'keyBuckling', group: 'indoor' },
+            { type: 'fan', group: 'indoor' },
+            { type: 'book', group: 'indoor' },
+            { type: 'coffee', group: 'indoor' },
+            { type: 'vinyl', group: 'indoor' }
+        ];
+        const pick = choices[Math.floor(Math.random() * choices.length)];
+        setAmbiance(pick.type, pick.group);
+    });
+
+    // --- Audio Synthesis Engine ---
+    function initAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterFilter = audioCtx.createBiquadFilter();
+        masterFilter.type = "lowpass";
+        masterFilter.frequency.setValueAtTime(filterCutoff, audioCtx.currentTime);
+        masterFilter.connect(audioCtx.destination);
+
+        clockGain = audioCtx.createGain();
+        clockGain.gain.setValueAtTime(isBeatMuted || clockType === 'off' ? 0 : clockVol, audioCtx.currentTime);
+        clockGain.connect(masterFilter);
+
+        noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(noiseType === 'off' ? 0 : noiseVol, audioCtx.currentTime);
+        noiseGain.connect(masterFilter);
+
+        createProceduralNoiseNode();
+    }
+
+    function createProceduralNoiseNode() {
+        const bufferSize = 4096;
+        noiseNode = audioCtx.createScriptProcessor(bufferSize, 0, 1);
+
+        let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+        let lastBrown = 0, lastWhite1 = 0;
+        let windLpf = 0;
+
+        noiseNode.onaudioprocess = (e) => {
+            const data = e.outputBuffer.getChannelData(0);
+            if (noiseType === 'off') {
+                data.fill(0);
+                return;
+            }
+
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                const t = (audioCtx.currentTime + i / audioCtx.sampleRate);
+
+                // Pink noise filter
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                const pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.065;
+                b6 = white * 0.115926;
+
+                lastBrown = (lastBrown + (0.02 * white)) / 1.02;
+
+                if (noiseType === 'crickets') {
+                    // Trail Sense multi-harmonic warm meadow cricket synthesis
+                    const phase = (t % 1.4);
+                    let env = 0;
+                    const pulseCycle = 0.050; // 40ms pulse, 10ms gap
+                    for (let p = 0; p < 3; p++) {
+                        const pStart = 0.06 + p * pulseCycle;
+                        if (phase >= pStart && phase < pStart + 0.040) {
+                            env = Math.sin(Math.PI * ((phase - pStart) / 0.040));
+                            break;
+                        }
+                    }
+                    const chirp = (
+                        0.40 * Math.sin(2 * Math.PI * (4250 * pitchMult) * t) +
+                        0.35 * Math.sin(2 * Math.PI * (4500 * pitchMult) * t + 1.2) +
+                        0.20 * Math.sin(2 * Math.PI * (4750 * pitchMult) * t + 2.5) +
+                        0.15 * Math.sin(2 * Math.PI * (4900 * pitchMult) * t + 0.7)
+                    ) * 0.35 * env;
+                    const meadowBed = pink * 0.06 + lastBrown * 0.04;
+                    data[i] = meadowBed + chirp;
+                }
+                else if (noiseType === 'meadow') {
+                    // Trail-Sense CricketsNoChirp: Calming meadow hum bed
+                    data[i] = pink * 0.15 + lastBrown * 0.05;
+                }
+                else if (noiseType === 'keyCreamy') {
+                    // Lubed POM Linear: Buttery, cushioned impact with rounded creamy pop (520Hz)
+                    const keyPhase = (t % 0.22);
+                    let k = 0;
+                    if (keyPhase < 0.035) {
+                        const pop = Math.sin(2 * Math.PI * (520 * pitchMult) * keyPhase) * Math.exp(-keyPhase / 0.018) * 0.42;
+                        const subLube = Math.sin(2 * Math.PI * (310 * pitchMult) * keyPhase) * Math.exp(-keyPhase / 0.026) * 0.22;
+                        k = pop + subLube;
+                    }
+                    data[i] = lastBrown * 0.02 + k;
+                }
+                else if (noiseType === 'keyMarbly') {
+                    // PE Foam Mod / Jelly Switch: Poppy, smooth marble raindrop sound (680Hz + 1290Hz)
+                    const keyPhase = (t % 0.22);
+                    let k = 0;
+                    if (keyPhase < 0.030) {
+                        const marblePop = Math.sin(2 * Math.PI * (680 * pitchMult) * keyPhase) * Math.exp(-keyPhase / 0.015) * 0.40;
+                        const harmonic = Math.sin(2 * Math.PI * (1290 * pitchMult) * keyPhase) * Math.exp(-keyPhase / 0.008) * 0.18;
+                        k = marblePop + harmonic;
+                    }
+                    data[i] = lastBrown * 0.02 + k;
+                }
+                else if (noiseType === 'keyTopre') {
+                    // Electro-capacitive rubber dome: Buttery smooth thock-clop
+                    const keyPhase = (t % 0.22);
+                    let k = 0;
+                    if (keyPhase < 0.010) {
+                        k += Math.sin(2 * Math.PI * (340 * pitchMult) * keyPhase) * 0.35;
+                    }
+                    if (keyPhase < 0.035) {
+                        k += Math.sin(2 * Math.PI * (480 * pitchMult) * keyPhase) * Math.exp(-keyPhase / 0.020) * 0.32;
+                    }
+                    data[i] = lastBrown * 0.02 + k;
+                }
+                else if (noiseType === 'keyBlue') {
+                    // Blue Switch: sharp click leaf (3100Hz) + clack (900Hz)
+                    const keyPhase = (t % 0.22);
+                    let k = 0;
+                    if (keyPhase < 0.0035) k += Math.sin(2 * Math.PI * 3100 * keyPhase) * 0.45;
+                    if (keyPhase < 0.016) k += Math.sin(2 * Math.PI * 920 * keyPhase) * Math.exp(-keyPhase / 0.012) * 0.35;
+                    data[i] = lastBrown * 0.03 + k;
+                }
+                else if (noiseType === 'keyBrown') {
+                    // Brown Switch: tactile bump (1500Hz) + muted clack (680Hz)
+                    const keyPhase = (t % 0.22);
+                    let k = 0;
+                    if (keyPhase < 0.006) k += Math.sin(2 * Math.PI * 1500 * keyPhase) * 0.22;
+                    if (keyPhase < 0.020) k += Math.sin(2 * Math.PI * 680 * keyPhase) * Math.exp(-keyPhase / 0.016) * 0.32;
+                    data[i] = lastBrown * 0.03 + k;
+                }
+                else if (noiseType === 'keyRed') {
+                    // Red Switch: linear deep thock (420Hz)
+                    const keyPhase = (t % 0.22);
+                    const thock = (keyPhase < 0.030) ? Math.sin(2 * Math.PI * 420 * keyPhase) * Math.exp(-keyPhase / 0.024) * 0.40 : 0;
+                    data[i] = lastBrown * 0.03 + thock;
+                }
+                else if (noiseType === 'keyChiclet') {
+                    // Chiclet: silent muffled dome tap (280Hz)
+                    const keyPhase = (t % 0.22);
+                    const tap = (keyPhase < 0.014) ? Math.sin(2 * Math.PI * 280 * keyPhase) * Math.exp(-keyPhase / 0.010) * 0.25 : 0;
+                    data[i] = lastBrown * 0.02 + tap;
+                }
+                else if (noiseType === 'keyBuckling') {
+                    // IBM Model M: spring buckle ping (2450Hz) + steel thud (195Hz)
+                    const keyPhase = (t % 0.24);
+                    let k = 0;
+                    if (keyPhase < 0.018) k += Math.sin(2 * Math.PI * 2450 * keyPhase) * Math.exp(-keyPhase / 0.008) * 0.4;
+                    if (keyPhase < 0.045) k += Math.sin(2 * Math.PI * 195 * keyPhase) * Math.exp(-keyPhase / 0.040) * 0.45;
+                    data[i] = lastBrown * 0.03 + k;
+                }
+                else if (noiseType === 'rain') {
+                    const splatter = (Math.random() < 0.003) ? (Math.random() * 2 - 1) * 0.35 : 0;
+                    data[i] = (pink * 0.25) + splatter;
+                }
+                else if (noiseType === 'thunder') {
+                    const th = (t % 6.0 < 1.8) ? lastBrown * 0.5 * Math.sin(Math.PI * ((t % 6.0) / 1.8)) : 0;
+                    data[i] = (pink * 0.25) + th;
+                }
+                else if (noiseType === 'brook') {
+                    const bubble = (Math.random() < 0.008) ? Math.sin(2 * Math.PI * (850 + Math.random() * 800) * t) * 0.35 : 0;
+                    data[i] = (pink * 0.20) + bubble;
+                }
+                else if (noiseType === 'campfire' || noiseType === 'fireplace') {
+                    const pop = (Math.random() < 0.0006) ? (Math.random() * 2 - 1) * 0.55 : 0;
+                    data[i] = (lastBrown * 0.25) + pop;
+                }
+                else if (noiseType === 'ocean') {
+                    // Trail-Sense OceanWavesAudioStream: 20-second wave with cubic power swell
+                    const wavePhase = (t % 20.0) / 20.0;
+                    const swell = Math.pow(0.5 + 0.5 * Math.sin(2 * Math.PI * wavePhase), 3.0);
+                    data[i] = (0.95 * lastBrown * 0.65 * swell) + (0.05 * pink * 0.05);
+                }
+                else if (noiseType === 'wind') {
+                    const cutoff = 500 + 800 * (0.5 + 0.5 * Math.sin(2 * Math.PI * (t / 4.0)));
+                    const rc = 1.0 / (2 * Math.PI * cutoff);
+                    const dt = 1.0 / audioCtx.sampleRate;
+                    const a = dt / (rc + dt);
+                    windLpf += a * (pink - windLpf);
+                    data[i] = windLpf * 0.6;
+                }
+                else if (noiseType === 'fan') {
+                    // Trail-Sense FanNoiseAudioStream: 0.85 brown noise + 0.15 dual-harmonic 100Hz motor hum
+                    const hum = (Math.sin(2 * Math.PI * 100.0 * t) + 0.5 * Math.sin(2 * Math.PI * 200.0 * t)) * 0.15;
+                    const bladeDraft = 0.85 + 0.15 * Math.sin(2 * Math.PI * 3.5 * t);
+                    data[i] = (lastBrown * 0.85 + hum) * bladeDraft * 0.40;
+                }
+                else if (noiseType === 'book') {
+                    const isFlip = (t % 5.0 < 0.18);
+                    const flip = isFlip ? (pink * 0.45 * Math.sin(Math.PI * ((t % 5.0) / 0.18))) : 0;
+                    data[i] = (lastBrown * 0.06) + flip;
+                }
+                else if (noiseType === 'coffee') {
+                    const clink = (Math.random() < 0.00015) ? Math.sin(2 * Math.PI * 3100 * t) * 0.25 : 0;
+                    data[i] = (lastBrown * 0.18) + (pink * 0.08) + clink;
+                }
+                else if (noiseType === 'vinyl') {
+                    const pop = (Math.random() < 0.0008) ? (Math.random() * 2 - 1) * 0.35 : 0;
+                    data[i] = (lastBrown * 0.12) + (((white - lastWhite1) * 0.22) * 0.12) + pop;
+                    lastWhite1 = white;
+                }
+                else if (noiseType === 'clockRoom') {
+                    const t1 = (t % 1.0);
+                    const c1 = (t1 < 0.015) ? 0.25 * Math.sin(2 * Math.PI * 850.0 * t1) : 0;
+                    const t2 = (t % 1.25);
+                    const c2 = (t2 < 0.015) ? 0.18 * Math.sin(2 * Math.PI * 620.0 * t2) : 0;
+                    data[i] = lastBrown * 0.08 + c1 + c2;
+                }
+                else if (noiseType === 'pencil') {
+                    const stroke = 0.5 + 0.5 * Math.sin(2 * Math.PI * 1.8 * t);
+                    data[i] = ((white - lastWhite1) * 0.22) * 0.35 * stroke;
+                    lastWhite1 = white;
+                }
+                else if (noiseType === 'cicadas') {
+                    const swell = 0.5 + 0.5 * Math.sin(2 * Math.PI * 0.4 * t);
+                    data[i] = (Math.sin(2 * Math.PI * (5200 * pitchMult) * t) * swell * 0.28) + pink * 0.06;
+                }
+                else if (noiseType === 'white') data[i] = white * 0.25;
+                else if (noiseType === 'brown') data[i] = lastBrown * 0.45;
+                else if (noiseType === 'pink') data[i] = pink * 0.40;
+                else if (noiseType === 'biome') {
+                    const phase = (t / Math.max(2.0, morphDurationSec / 8.0));
+                    const wRain = 0.5 + 0.5 * Math.sin(2 * Math.PI * phase);
+                    const wWind = 0.5 + 0.5 * Math.cos(2 * Math.PI * phase);
+                    data[i] = (pink * 0.25 * wRain) + (lastBrown * 0.35 * wWind);
+                } else {
+                    data[i] = 0;
+                }
+            }
+        };
+
+        noiseNode.connect(noiseGain);
+    }
+
+    // Play Beat Trigger
+    function playBeat(time, isAccent) {
+        if (isBeatMuted || clockType === 'off') return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(clockGain);
+
+        let freq = isAccent ? 1050 * pitchMult : 750 * pitchMult;
+        let dur = 0.05 * decayMult;
+
+        if (clockType === 'woodblock') {
+            freq = (isAccent ? 1200 : 900) * pitchMult;
+            dur = 0.03 * decayMult;
+        } else if (clockType === 'cowbell') {
+            freq = (isAccent ? 840 : 587) * pitchMult;
+            dur = 0.08 * decayMult;
+        } else if (clockType === 'grandfather') {
+            freq = (isAccent ? 320 : 240) * pitchMult;
+            dur = 0.06 * decayMult;
+        } else if (clockType === 'digital') {
+            freq = (isAccent ? 1760 : 880) * pitchMult;
+            dur = 0.02 * decayMult;
+        }
+
+        osc.frequency.setValueAtTime(freq, time);
+        gain.gain.setValueAtTime(0.4, time);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+
+        osc.start(time);
+        osc.stop(time + dur);
+    }
+
+    function scheduleBeats() {
+        while (nextBeatTime < audioCtx.currentTime + 0.1) {
+            const isAccent = (currentBeat === 0);
+            playBeat(nextBeatTime, isAccent);
+
+            const beatNum = currentBeat + 1;
+            setTimeout(() => {
+                const orb = document.getElementById('beatOrb');
+                orb.innerText = beatNum;
+                orb.style.transform = isAccent ? "scale(1.3)" : "scale(1.15)";
+                setTimeout(() => { orb.style.transform = "scale(1.0)"; }, 120);
+            }, Math.max(0, (nextBeatTime - audioCtx.currentTime) * 1000));
+
+            currentBeat = (currentBeat + 1) % beatsPerBar;
+            const nominalInterval = 60.0 / bpm;
+            const jitterOffset = (humanJitter > 0.01) ? (Math.random() * 2 - 1) * (0.12 * humanJitter) * nominalInterval : 0;
+            nextBeatTime += Math.max(0.05, nominalInterval + jitterOffset);
+        }
+        timerId = setTimeout(scheduleBeats, 25);
+    }
+
+    const playBtn = document.getElementById('playBtn');
+    playBtn.addEventListener('click', () => {
+        initAudio();
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        if (!isPlaying) {
+            isPlaying = true;
+            nextBeatTime = audioCtx.currentTime + 0.05;
+            currentBeat = 0;
+            scheduleBeats();
+            playBtn.innerText = "⏹ STOP CHRONONOISE";
+            playBtn.classList.add('playing');
+            document.getElementById('statusBadge').innerText = "ACTIVE";
+            document.getElementById('statusBadge').classList.add('active');
+        } else {
+            isPlaying = false;
+            clearTimeout(timerId);
+            playBtn.innerText = "▶ START CHRONONOISE";
+            playBtn.classList.remove('playing');
+            document.getElementById('statusBadge').innerText = "STANDBY";
+            document.getElementById('statusBadge').classList.remove('active');
+        }
+    });
+</script>
+</body>
+</html>

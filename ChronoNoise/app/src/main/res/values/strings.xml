@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ChronoNoise</string>
+    <string name="notification_channel_name">Audio Playback</string>
+    <string name="notification_title">ChronoNoise Active</string>
+    <string name="notification_text">Metronome and ambient noise generator running</string>
+    <string name="btn_stop">Stop</string>
+</resources>

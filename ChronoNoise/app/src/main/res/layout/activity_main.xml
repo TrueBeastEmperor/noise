@@ -1,0 +1,1974 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootCoordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Header: App Title, Quick Randomizer & Status Badge -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvAppTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⚡ ChronoNoise"
+                android:textColor="@color/primary_cyan"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRandomize"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="🎲 RANDOMIZE"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="18dp" />
+
+            <TextView
+                android:id="@+id/tvTimerBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏱️ OFF"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/accent_amber"
+                android:background="@drawable/bg_badge"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tvStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="STANDBY"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_muted"
+                android:background="@drawable/bg_badge"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+        </LinearLayout>
+
+        <!-- Master Sound Category Navigation Tabs -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/card_dark"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/primary_cyan"
+            app:tabTextColor="@color/text_muted"
+            app:tabIndicatorColor="@color/primary_cyan"
+            app:tabIndicatorHeight="3dp"
+            app:tabTextAppearance="@style/TextAppearance.Material3.LabelMedium">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏰ Beat &amp; Clock" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌿 Nature" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⌨️ Keyboards" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌈 Spectral Colors" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌀 Living Biome" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎛️ Synth &amp; Themes" />
+        </com.google.android.material.tabs.TabLayout>
+
+        <!-- Scrollable Tab Content Container -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:clipToPadding="false"
+            android:paddingBottom="90dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- ========================================== -->
+                <!-- TAB 0: BEAT & METRONOME                    -->
+                <!-- ========================================== -->
+                <LinearLayout
+                    android:id="@+id/tabContentBeat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <!-- Beat Enable / Disable Master Switch Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardBeatToggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="14dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="12dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvBeatSwitchTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Clock / Metronome Beat"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvBeatSwitchSubtitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Turn off when you only want nature or keyboard sounds"
+                                    android:textColor="@color/text_muted"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+
+                            <com.google.android.material.materialswitch.MaterialSwitch
+                                android:id="@+id/switchBeatEnabled"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Haptic Tactile Beat Switch Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardHapticsToggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="14dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="12dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📳 Haptic Metronome Ticks"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Tactile click pulses in your hand or pocket on each beat"
+                                    android:textColor="@color/text_muted"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+
+                            <com.google.android.material.materialswitch.MaterialSwitch
+                                android:id="@+id/switchHaptics"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="false" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Beat Visualizer Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardVisualizer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="16dp">
+
+                            <FrameLayout
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:layout_gravity="center">
+
+                                <View
+                                    android:id="@+id/viewBeatOrbPulse"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:background="@drawable/bg_beat_orb"
+                                    android:alpha="0.25" />
+
+                                <TextView
+                                    android:id="@+id/tvBeatCounter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="1"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold" />
+                            </FrameLayout>
+
+                            <!-- Tempo Controls -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:layout_marginTop="12dp">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnBpmMinus"
+                                    style="@style/Widget.Material3.Button.TonalButton"
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:padding="0dp"
+                                    android:text="−"
+                                    android:textSize="20sp"
+                                    app:cornerRadius="12dp" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:layout_marginHorizontal="24dp">
+
+                                    <TextView
+                                        android:id="@+id/tvBpmValue"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="60"
+                                        android:textColor="@color/text_main"
+                                        android:textSize="32sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvBpmLabel"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="BPM (Pace)"
+                                        android:textColor="@color/text_muted"
+                                        android:textSize="11sp" />
+                                </LinearLayout>
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnBpmPlus"
+                                    style="@style/Widget.Material3.Button.TonalButton"
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:padding="0dp"
+                                    android:text="+"
+                                    android:textSize="20sp"
+                                    app:cornerRadius="12dp" />
+                            </LinearLayout>
+
+                            <com.google.android.material.slider.Slider
+                                android:id="@+id/sliderBpm"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:valueFrom="30.0"
+                                android:valueTo="300.0"
+                                android:stepSize="1.0"
+                                android:value="60.0"
+                                app:trackColorActive="@color/primary_cyan"
+                                app:thumbColor="@color/primary_cyan"
+                                android:layout_marginTop="6dp" />
+
+                            <!-- Tap Tempo and Signature Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:layout_marginTop="4dp">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnTapTempo"
+                                    style="@style/Widget.Material3.Button.OutlinedButton"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text="👆 TAP TEMPO"
+                                    android:textSize="10sp"
+                                    app:strokeColor="@color/card_dark_stroke"
+                                    android:textColor="@color/text_main" />
+
+                                <Space
+                                    android:layout_width="12dp"
+                                    android:layout_height="wrap_content" />
+
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroupSignature"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:singleSelection="true">
+
+                                    <com.google.android.material.chip.Chip
+                                        android:id="@+id/chipSig2"
+                                        style="@style/Widget.Material3.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="32dp"
+                                        android:text="2/4" />
+
+                                    <com.google.android.material.chip.Chip
+                                        android:id="@+id/chipSig3"
+                                        style="@style/Widget.Material3.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="32dp"
+                                        android:text="3/4" />
+
+                                    <com.google.android.material.chip.Chip
+                                        android:id="@+id/chipSig4"
+                                        style="@style/Widget.Material3.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="32dp"
+                                        android:checked="true"
+                                        android:text="4/4" />
+
+                                    <com.google.android.material.chip.Chip
+                                        android:id="@+id/chipSig6"
+                                        style="@style/Widget.Material3.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="32dp"
+                                        android:text="6/8" />
+                                </com.google.android.material.chip.ChipGroup>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Clock & Metronome Type Selector -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardClock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/tvClockTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🕰️ CLOCK &amp; METRONOME SOUNDS"
+                                android:textColor="@color/primary_cyan"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="2dp" />
+
+                            <TextView
+                                android:id="@+id/tvClockDescription"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Original 1050Hz / 750Hz dual-frequency decayed sine wave"
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp"
+                                android:layout_marginBottom="10dp" />
+
+                            <!-- Volume Slider -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:id="@+id/tvClockVolLabel"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Beat Volume"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:id="@+id/sliderClockVolume"
+                                    android:layout_width="180dp"
+                                    android:layout_height="wrap_content"
+                                    android:valueFrom="0.0"
+                                    android:valueTo="1.0"
+                                    android:stepSize="0.01"
+                                    android:value="0.75"
+                                    app:trackColorActive="@color/primary_cyan"
+                                    app:thumbColor="@color/primary_cyan" />
+                            </LinearLayout>
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupClockType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockOff"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🔇 Mute / Off" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockEtera"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="⚡ Etera Synthesized" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockGrandfather"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🕰️ Grandfather Clock" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockWatch"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⏱️ Watch Escapement" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockWoodblock"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🪵 Woodblock" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockCowbell"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🔔 Cowbell" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockWaterDrop"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💧 Water Droplet" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockHeartbeat"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💓 Heartbeat" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockVintage"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⏰ Vintage Twin-Bell" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockMantle"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🕰️ Mantle Clock" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockClepsydra"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🏺 Ancient Clepsydra" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockFingerSnap"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🫰 Finger Snap" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockSonar"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📡 Sonar Ping" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockTelegraph"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📻 Telegraph" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockSingingBowl"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🥣 Singing Bowl" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockTowerBell"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🔔 Tower Bell" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockDigital"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📟 Digital Beep" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockOrganicTypewriter"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⌨️ Typewriter Metronome" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipClockBookPage"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📖 Book Page Metronome" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!-- ========================================== -->
+                <!-- TAB 1: NATURE SOUNDSCAPES                  -->
+                <!-- ========================================== -->
+                <LinearLayout
+                    android:id="@+id/tabContentNature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Nature Enable / Volume Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardNatureControls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="14dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="🌿 Nature Ambiance"
+                                    android:textColor="@color/accent_emerald"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.materialswitch.MaterialSwitch
+                                    android:id="@+id/switchNatureEnabled"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="false" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Nature Volume"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:id="@+id/sliderNatureVolume"
+                                    android:layout_width="180dp"
+                                    android:layout_height="wrap_content"
+                                    android:valueFrom="0.0"
+                                    android:valueTo="1.0"
+                                    android:stepSize="0.01"
+                                    android:value="0.30"
+                                    app:trackColorActive="@color/accent_emerald"
+                                    app:thumbColor="@color/accent_emerald" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Nature Presets Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardNaturePresets"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="OUTDOOR BIOMES"
+                                android:textColor="@color/accent_emerald"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <TextView
+                                android:id="@+id/tvNatureDescription"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Choose an acoustic natural environment"
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp"
+                                android:layout_marginBottom="10dp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupNature"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureCrickets"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🦗 Summer Night Crickets" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureMeadow"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌾 Nocturnal Meadow (Trail-Sense)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureRain"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌧️ Gentle Rain" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureThunder"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⛈️ Distant Thunder" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureBrook"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🏞️ Mountain Brook" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureCampfire"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🔥 Campfire Crackle" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureOcean"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌊 Ocean Waves" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureWind"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🍃 Forest Wind" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureCicadas"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🪲 Summer Cicadas" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureCave"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🕳️ Deep Cave Echoes" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureFrogs"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🐸 Night Frogs" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipNatureBlizzard"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="❄️ Blizzard Howl" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!-- ========================================== -->
+                <!-- TAB 2: KEYBOARDS & INDOOR                  -->
+                <!-- ========================================== -->
+                <LinearLayout
+                    android:id="@+id/tabContentKeyboards"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Indoor Enable / Volume Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardIndoorControls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="14dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="⌨️ Keyboards &amp; Study Ambiance"
+                                    android:textColor="@color/accent_amber"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.materialswitch.MaterialSwitch
+                                    android:id="@+id/switchIndoorEnabled"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="false" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Typing &amp; Room Volume"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:id="@+id/sliderIndoorVolume"
+                                    android:layout_width="180dp"
+                                    android:layout_height="wrap_content"
+                                    android:valueFrom="0.0"
+                                    android:valueTo="1.0"
+                                    android:stepSize="0.01"
+                                    android:value="0.30"
+                                    app:trackColorActive="@color/accent_amber"
+                                    app:thumbColor="@color/accent_amber" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Keyboards Synthesizers Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardKeyboards"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="KEYBOARDS &amp; SWITCHES"
+                                android:textColor="@color/accent_amber"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="2dp" />
+
+                            <TextView
+                                android:id="@+id/tvKeyboardDescription"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Procedural mechanical &amp; silent scissor switches"
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp"
+                                android:layout_marginBottom="10dp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupKeyboards"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyCreamy"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="🍦 Creamy Lubed (Buttery Smooth)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyMarbly"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🪨 Marbly Jelly (Poppy Foam)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyTopre"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="☁️ Muted Topre (Capacitive)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyRed"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⌨️ Red Switch (Linear Thock)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyBrown"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⌨️ Brown Switch (Tactile)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyBlue"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⌨️ Blue Switch (Clicky)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyChiclet"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💻 Laptop / Chiclet (Silent)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipKeyBuckling"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📟 IBM Model M (Buckling Spring)" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Indoor Study & Focus Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardIndoorRooms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="INDOOR &amp; FOCUS AMBIANCE"
+                                android:textColor="@color/accent_amber"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="2dp" />
+
+                            <TextView
+                                android:id="@+id/tvIndoorDescription"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Books, coffee shops, vinyl records &amp; calm rooms"
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp"
+                                android:layout_marginBottom="10dp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupIndoor"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipIndoorBook"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📖 Book Page Flipping" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipIndoorCoffee"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="☕ Coffee Shop Ambience" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipIndoorVinyl"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📻 Vintage Vinyl Record" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipIndoorClockRoom"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🕰️ Antique Clock Room" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipIndoorFan"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💨 Ceiling Fan &amp; Drone" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipIndoorFireplace"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🪵 Cozy Hearth Fireplace" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipIndoorPencil"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="✏️ Pencil Sketching" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!-- ========================================== -->
+                <!-- TAB 3: SPECTRAL COLOR NOISE                -->
+                <!-- ========================================== -->
+                <LinearLayout
+                    android:id="@+id/tabContentColors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Colors Enable / Volume Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardColorControls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="14dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="🌈 Spectral Colored Noise"
+                                    android:textColor="@color/primary_purple"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.materialswitch.MaterialSwitch
+                                    android:id="@+id/switchColorEnabled"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="false" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Noise Volume"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:id="@+id/sliderColorVolume"
+                                    android:layout_width="180dp"
+                                    android:layout_height="wrap_content"
+                                    android:valueFrom="0.0"
+                                    android:valueTo="1.0"
+                                    android:stepSize="0.01"
+                                    android:value="0.25"
+                                    app:trackColorActive="@color/primary_purple"
+                                    app:thumbColor="@color/primary_purple" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Color Palettes Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardColorPresets"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="SPECTRAL DENSITY PROFILES"
+                                android:textColor="@color/primary_purple"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="2dp" />
+
+                            <TextView
+                                android:id="@+id/tvColorDescription"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Select frequency slope (Brown 1/f², Pink 1/f, Grey equal loudness, etc.)"
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp"
+                                android:layout_marginBottom="10dp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupColors"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorBrown"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🟤 Brown (Deep 1/f²)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorPink"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌸 Pink (Balanced 1/f)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorWhite"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⚪ White (Equal Energy)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorGrey"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🔘 Grey (Equal Loudness)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorGreen"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🟢 Green (Forest Mid-Hum)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorBlue"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🔵 Blue (Crisp +3dB)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorViolet"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🟣 Violet (High Hiss +6dB)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipColorBlack"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⚫ Black (Sub-Bass &lt;90Hz)" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!-- ========================================== -->
+                <!-- TAB 4: LIVING BIOME DYNAMIC MORPHING       -->
+                <!-- ========================================== -->
+                <LinearLayout
+                    android:id="@+id/tabContentBiome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Living Biome Status & Enable Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardBiomeControls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="🌀 Living Biome (Dynamic Morphing)"
+                                    android:textColor="@color/primary_cyan"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.materialswitch.MaterialSwitch
+                                    android:id="@+id/switchBiomeEnabled"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="false" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Autonomous cross-fading soundscape: transitions seamlessly between rain, crickets, forest wind, hearth fire, and library books over your chosen duration."
+                                android:textColor="@color/text_muted"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="14dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_badge"
+                                android:padding="10dp"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Morphing Speed:"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvMorphSpeedLabel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="1 Minute"
+                                    android:textColor="@color/primary_cyan"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupMorphSpeed"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMorph15s"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text="15 Seconds" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMorph1m"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:checked="true"
+                                    android:text="1 Minute" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMorph5m"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text="5 Minutes" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMorph15m"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text="15 Minutes" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMorph1h"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text="1 Hour" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMorph4h"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text="4 Hours" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMorph24h"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text="24 Hours (Day Cycle)" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!-- ========================================== -->
+                <!-- TAB 5: SYNTH & THEMES                      -->
+                <!-- ========================================== -->
+                <LinearLayout
+                    android:id="@+id/tabContentSynth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Sleep & Focus Timer Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSleepTimer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="6dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="⏱️ SLEEP &amp; FOCUS TIMER"
+                                    android:textColor="@color/accent_amber"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvTimerCountdown"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Off"
+                                    android:textColor="@color/accent_amber"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Fades volume smoothly to silence over the final 60 seconds."
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp"
+                                android:layout_marginBottom="10dp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupSleepTimer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipTimerOff"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="Off" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipTimer15"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="15m" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipTimer30"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="30m" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipTimer45"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="45m" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipTimer60"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="60m" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipTimerPomodoro"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🍅 25m Pomodoro" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Multi-Stem Layering Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardMultiStemLayer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="6dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="🌌 BACKGROUND ATMOSPHERE BED"
+                                    android:textColor="@color/accent_emerald"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvBgBedVolume"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="25%"
+                                    android:textColor="@color/accent_emerald"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Layer a secondary ambient texture underneath your primary sound."
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp"
+                                android:layout_marginBottom="8dp" />
+
+                            <com.google.android.material.slider.Slider
+                                android:id="@+id/sliderBgVolume"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:valueFrom="0.0"
+                                android:valueTo="1.0"
+                                android:stepSize="0.01"
+                                android:value="0.25"
+                                app:trackColorActive="@color/accent_emerald"
+                                app:thumbColor="@color/accent_emerald" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupBgLayer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipBgNone"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="None (Solo)" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipBgRain"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌧️ Rain" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipBgMeadow"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌾 Meadow" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipBgFan"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💨 Fan" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipBgVinyl"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📻 Vinyl" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipBgFireplace"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🪵 Hearth" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Theme Selector Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/tvThemeTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🎨 VISUAL PALETTES &amp; THEMES"
+                                android:textColor="@color/primary_cyan"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="10dp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/chipGroupTheme"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true">
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeCyber"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="⚡ Cyber Cyan" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeOled"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌑 OLED Midnight" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeForest"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌲 Forest Emerald" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeSunset"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌅 Sunset Ember" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeTokyo"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🔮 Tokyo Neon" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeNordic"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="❄️ Nordic Frost" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeCoffee"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="☕ Coffee Library" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeSolarized"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="☀️ Solarized Teal" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeDracula"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🧛 Dracula Neon" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipThemeAbyssal"
+                                    style="@style/Widget.Material3.Chip.Filter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🌊 Abyssal Trench" />
+                            </com.google.android.material.chip.ChipGroup>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Acoustic Synthesizer Controls Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAcoustics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/card_dark"
+                        app:strokeColor="@color/card_dark_stroke"
+                        app:strokeWidth="1dp"
+                        app:cardCornerRadius="16dp"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/tvAcousticsTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🎛️ ACOUSTIC SYNTHESIZER CONTROLS"
+                                android:textColor="@color/accent_pink"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="12dp" />
+
+                            <!-- Humanize / Timing Jitter -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Humanize / Timing Jitter"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tvJitterValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0% (Robotic)"
+                                    android:textColor="@color/accent_pink"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <com.google.android.material.slider.Slider
+                                android:id="@+id/sliderJitter"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:valueFrom="0.0"
+                                android:valueTo="1.0"
+                                android:stepSize="0.05"
+                                android:value="0.0"
+                                app:trackColorActive="@color/accent_pink"
+                                app:thumbColor="@color/accent_pink" />
+
+                            <!-- Pitch Multiplier -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="8dp">
+
+                                <TextView
+                                    android:id="@+id/tvPitchLabel"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Pitch Scaling"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tvPitchValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="1.00x"
+                                    android:textColor="@color/accent_pink"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <com.google.android.material.slider.Slider
+                                android:id="@+id/sliderPitch"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:valueFrom="0.5"
+                                android:valueTo="2.5"
+                                android:stepSize="0.05"
+                                android:value="1.0"
+                                app:trackColorActive="@color/accent_pink"
+                                app:thumbColor="@color/accent_pink" />
+
+                            <!-- Decay / Resonance -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="8dp">
+
+                                <TextView
+                                    android:id="@+id/tvDecayLabel"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Decay / Resonance Time"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tvDecayValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="1.00x"
+                                    android:textColor="@color/accent_amber"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <com.google.android.material.slider.Slider
+                                android:id="@+id/sliderDecay"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:valueFrom="0.2"
+                                android:valueTo="3.0"
+                                android:stepSize="0.05"
+                                android:value="1.0"
+                                app:trackColorActive="@color/accent_amber"
+                                app:thumbColor="@color/accent_amber" />
+
+                            <!-- Low Pass Filter Cutoff -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="8dp">
+
+                                <TextView
+                                    android:id="@+id/tvFilterLabel"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Tone Filter (Cutoff Hz)"
+                                    android:textColor="@color/text_main"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/tvFilterValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="12000 Hz"
+                                    android:textColor="@color/accent_emerald"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <com.google.android.material.slider.Slider
+                                android:id="@+id/sliderFilter"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:valueFrom="200.0"
+                                android:valueTo="20000.0"
+                                android:stepSize="100.0"
+                                android:value="12000.0"
+                                app:trackColorActive="@color/accent_emerald"
+                                app:thumbColor="@color/accent_emerald" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <!-- Bottom Floating Play / Stop Action Bar -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:cardBackgroundColor="@color/card_dark"
+        app:strokeColor="@color/card_dark_stroke"
+        app:strokeWidth="1dp"
+        app:cardCornerRadius="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMainPlayPause"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="▶ START CHRONONOISE"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/bg_dark"
+                app:backgroundTint="@color/primary_cyan"
+                app:cornerRadius="28dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
